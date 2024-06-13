@@ -1,0 +1,98 @@
+from sklearn.cluster import KMeans
+import pandas as pd
+from sklearn.mixture import GaussianMixture
+from matplotlib import pyplot as plt
+import numpy as np
+import math
+%matplotlib inline
+
+filename = '/Users/Mom/Desktop/ClusteringProject/Data/P01CT230230C01_ST.csv'
+filename2 = '/Users/Mom/Desktop/ClusteringProject/Data/P01CT23030C02_ST.csv'
+
+df = pd.read_csv(filename2)
+
+df['PE-Cy7-A_log'] = np.log10(df['PE-Cy7-A'])
+plt.scatter(df['FSC-A'], df['PE-Cy7-A_log'], s  =0.05)
+#plt.scatter(df['FSC-A'], np.log10(df['PE-Cy7-A']), s  =0.05) 
+#plt.ylim([0,100000])
+plt.xlabel('FSC-A')
+plt.ylabel('PE-Cy7-A')
+plt.show()
+
+gmm = GaussianMixture(n_components = 6)
+y_predicted = gmm.fit_predict(df[['FSC-A' , 'PE-Cy7-A']])
+y_predicted
+df['cluster'] = y_predicted
+
+print("% Cells in cluster1: ",df[df.cluster==0].shape[0]/df.shape[0]*100)
+print("% Cells in cluster2: ",df[df.cluster==1].shape[0]/df.shape[0]*100)
+print("% Cells in cluster3: ",df[df.cluster==2].shape[0]/df.shape[0]*100)
+print("% Cells in cluster4: ",df[df.cluster==3].shape[0]/df.shape[0]*100)
+print("% Cells in cluster5: ",df[df.cluster==4].shape[0]/df.shape[0]*100)
+print("% Cells in cluster6: ",df[df.cluster==5].shape[0]/df.shape[0]*100)
+
+
+# Convert 'PE-Cy7-A' column to logarithmic scale
+df['PE-Cy7-A_log'] = np.log10(df['PE-Cy7-A'])
+
+# Split DataFrame based on clusters
+df1 = df[df['cluster'] == 0]
+df2 = df[df['cluster'] == 1]
+df3 = df[df['cluster'] == 2]
+df4 = df[df['cluster'] == 3]
+df5 = df[df['cluster'] == 4]
+df6 = df[df['cluster'] == 5]
+
+# Plot clustered scatter plot with logarithmic scale
+plt.scatter(df1['FSC-A'], df1['PE-Cy7-A_log'], color='green', s=0.05, label='Cluster 0')
+plt.scatter(df2['FSC-A'], df2['PE-Cy7-A_log'], color='red', s=0.05, label='Cluster 1')
+plt.scatter(df3['FSC-A'], df3['PE-Cy7-A_log'], color='blue', s=0.05, label='Cluster 2')
+plt.scatter(df4['FSC-A'], df4['PE-Cy7-A_log'], color='black', s=0.05, label='Cluster 3')
+plt.scatter(df5['FSC-A'], df5['PE-Cy7-A_log'], color='yellow', s=0.05, label='Cluster 4')
+plt.scatter(df6['FSC-A'], df6['PE-Cy7-A_log'], color='pink', s=0.05, label='Cluster 5')
+
+
+plt.scatter(gmm.means_[:, 0], np.log10(gmm.means_[:, 1]), color='purple', marker='*', label='Centroid')
+
+plt.xlabel('FSC-A')
+plt.ylabel('Log(PE-Cy7-A)')
+plt.legend()
+plt.show()
+
+# sse = []
+ # k_range = range(1,10)
+ # for k in k_range:
+ #     km = KMeans(n_clusters=k)
+ #     km.fit(df[['FSC-A','SSC-A']])
+ #     sse.append(km.inertia_)
+
+ # plt.xlabel('K')
+ # plt.ylabel('Sum of squared error')
+ # plt.plot(k_range, sse)
+
+print('THANK YOU FOR WAITING!!!!')
+CD3_cell_cluster = input("Now, which clusters count and percent do you require???")
+
+x = int(CD3_cell_cluster)
+
+if x == 0:
+    print("Percentage of CD3+ cells : ",round(df[df.cluster==0 ].shape[0]/df.shape[0]*100,2),'%')
+    print("Number of CD3+ cells : " , len(df1))
+elif x == 1:
+    print("Percentage of CD3+ cells : ",round(df[df.cluster==1].shape[0]/df.shape[0]*100,2),'%')
+    print("Number of CD3+ cells : " , len(df2))
+elif x == 2:
+    print("Percentage of CD3+ cells : ",round(df[df.cluster==2].shape[0]/df.shape[0]*100,2),'%')
+    print("Number of CD3+ cells : " , len(df3))
+elif x == 3:
+    print("Percentage of CD3+ cells : ",round(df[df.cluster==3].shape[0]/df.shape[0]*100,2),'%')
+    print("Number of CD3+ cells : " , len(df4))
+elif x == 4:
+    print("Percentage of CD3+ cells : ",round(df[df.cluster==4].shape[0]/df.shape[0]*100,2),'%')
+    print("Number of CD3+ cells : " , len(df5))
+elif x == 5:
+    print("Percentage of CD3+ cells : ",round(df[df.cluster==5].shape[0]/df.shape[0]*100,2),'%')
+    print("Number of CD3+ cells : " , len(df6))
+else: 
+    print('Please enter a number from 0-6')
+elif x == 6:
